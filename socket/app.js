@@ -44,11 +44,15 @@ import dotenv from "dotenv";
 
 // Load environment variables from .env file
 dotenv.config();
-
+const allowedorigins = [
+  "http://localhost:5173",
+  "https://realestate-de24.vercel.app",
+];
 const io = new Server({
   cors: {
-    origin: process.env.CLIENT_URL,
-    methods: ["GET", "POST"],
+    origin: allowedorigins,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
   },
 });
 
