@@ -68,7 +68,8 @@ export const login = async (req, res) => {
     res
       .cookie("token", token, {
         httpOnly: true,
-        // secure:true,
+        secure: true, // ⬅️ Only for production (HTTPS). Use false for localhost dev.
+        sameSite: "None", // ⬅️ Required if frontend and backend are on different domains
         maxAge: age,
       })
       .status(200)
