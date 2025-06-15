@@ -187,7 +187,6 @@ const httpServer = createServer(app); // <-- use this with Socket.IO
 const allowedOrigins = [
   "http://localhost:5173",
   "https://realestate-frontend-blond.vercel.app", // your frontend vercel
-  "https://realestate-de24.vercel.app", // if still used
 ];
 
 app.use(

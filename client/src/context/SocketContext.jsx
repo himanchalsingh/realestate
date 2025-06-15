@@ -34,7 +34,7 @@ export const SocketContextProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const newSocket = io("https://realestate-5-socket.onrender.com", {
+    const newSocket = io("http://localhost:4000", {
       withCredentials: true,
       transports: ["websocket", "polling"],
     });
