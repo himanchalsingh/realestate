@@ -11,14 +11,19 @@ import dotenv from "dotenv";
 
 const app = express();
 dotenv.config();
-const allowedorigins = [
+const allowedOrigins = [
   "http://localhost:5173",
   "https://realestate-de24.vercel.app",
 ];
 app.use(
   cors({
-    origin: allowedorigins,
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS: " + origin));
+      }
+    },
     credentials: true,
   })
 );
