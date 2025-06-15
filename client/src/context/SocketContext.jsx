@@ -34,7 +34,7 @@ export const SocketContextProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const newSocket = io("https://realestate-3-4vim.onrender.com", {
+    const newSocket = io("https://realestate-5-ac2p.onrender.com", {
       withCredentials: true,
       transports: ["websocket", "polling"],
     });

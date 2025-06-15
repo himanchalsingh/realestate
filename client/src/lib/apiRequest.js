@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const apiRequest = axios.create({
-  baseURL: "https://realestate-api-sad8.onrender.com/api",
+  baseURL: "https://realestate-4-dctn.onrender.com/api",
   withCredentials: true,
 });
 
