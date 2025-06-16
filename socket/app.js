@@ -1,264 +1,69 @@
-// import { config } from "dotenv"; // Import dotenv for environment variable support
-// import { Server } from "socket.io"; // Import Server from socket.io
-
-// // Load environment variables from .env
-// config();
-
-// // Setup CORS and other options for Socket.io
-// const io = new Server({
-//   cors: {
-//     origin: "http://localhost:5173", // Adjust this for your frontend URL
-//   },
-// });
-
-// // Use process.env.PORT with a fallback to 4000 for local development
-// const PORT = process.env.PORT || 5550;
-
-// let onlineUser = []; // Store all connected users
-
-// // Function to add a user to the online user list
-// const addUser = (userId, socketId) => {
-//   const userExists = onlineUser.find((user) => user.userId === userId);
-//   if (!userExists) {
-//     onlineUser.push({ userId, socketId });
-//   }
-// };
-
-// // Function to remove a user from the online user list
-// const removeUser = (socketId) => {
-//   onlineUser = onlineUser.filter((user) => user.socketId !== socketId);
-// };
-
-// // Function to get a user by userId
-// const getUser = (userId) => {
-//   return onlineUser.find((user) => user.userId === userId);
-// };
-
-// // Handle socket.io connections
-// io.on("connection", (socket) => {
-//   console.log("A user connected:", socket.id);
-
-//   // Add new user when they connect
-//   socket.on("newUser", (userId) => {
-//     addUser(userId, socket.id);
-//   });
-
-//   // Handle sending messages
-//   socket.on("sendMessage", ({ receiverId, data }) => {
-//     const receiver = getUser(receiverId);
-//     if (receiver) {
-//       io.to(receiver.socketId).emit("getMessage", data);
-//     }
-//   });
-
-//   // Remove user on disconnect
-//   socket.on("disconnect", () => {
-//     console.log("A user disconnected:", socket.id);
-//     removeUser(socket.id);
-//   });
-// });
-
-// // Listen on the port from .env or default to 4000
-// io.listen(PORT, () => {
-//   console.log(`Socket server is running on port ${PORT}`);
-// });
-
-// import { Server } from "socket.io";
-// const io = new Server({
-//   cors: {
-//     origin: "http://localhost:5173",
-//   },
-// });
-
-// let onlineUser = [];
-
-// const addUser = (userId, socketId) => {
-//   const userExits = onlineUser.find((user) => user.userId === userId);
-//   if (!userExits) {
-//     onlineUser.push({ userId, socketId });
-//   }
-// };
-
-// const removeUser = (socketId) => {
-//   onlineUser = onlineUser.filter((user) => user.socketId !== socketId);
-// };
-
-// const getUser = (userId) => {
-//   return onlineUser.find((user) => user.userId === userId);
-// };
-
-// io.on("connection", (socket) => {
-//   socket.on("newUser", (userId) => {
-//     addUser(userId, socket.id);
-//   });
-
-//   socket.on("sendMessage", ({ receiverId, data }) => {
-//     const receiver = getUser(receiverId);
-//     io.to(receiver.socketId).emit("getMessage", data);
-//   });
-
-//   socket.on("disconnect", () => {
-//     removeUser(socket.id);
-//   });
-// });
-
-// io.listen("4000");
-
-// import { Server } from "socket.io";
-// import dotenv from "dotenv";
-// const express = require("express");
-// const cors = require("cors");
-// // Load environment variables from .env file
-// dotenv.config();
-// const allowedorigins = [
-//   "http://localhost:5173",
-//   "https://realestate-de24.vercel.app",
-// ];
-// const io = new Server({
-//   cors: {
-//     origin: allowedorigins,
-//     methods: ["GET", "POST", "PUT", "DELETE"],
-//     credentials: true,
-//   },
-// });
-
-// let onlineUsers = [];
-
-// // Add user if not already present
-// const addUser = (userId, socketId) => {
-//   const exists = onlineUsers.some((user) => user.userId === userId);
-//   if (!exists) {
-//     onlineUsers.push({ userId, socketId });
-//     console.log(`✅ User connected: ${userId} (${socketId})`);
-//   }
-// };
-
-// // Remove user by socketId
-// const removeUser = (socketId) => {
-//   onlineUsers = onlineUsers.filter((user) => user.socketId !== socketId);
-//   console.log(`❌ Socket disconnected: ${socketId}`);
-// };
-
-// // Get user by userId
-// const getUser = (userId) => {
-//   return onlineUsers.find((user) => user.userId === userId);
-// };
-
-// io.on("connection", (socket) => {
-//   console.log(`📡 New socket connected: ${socket.id}`);
-
-//   socket.on("newUser", (userId) => {
-//     addUser(userId, socket.id);
-//     console.log("👥 Current online users:", onlineUsers);
-//   });
-
-//   socket.on("sendMessage", ({ receiverId, data }) => {
-//     const receiver = getUser(receiverId);
-//     if (receiver?.socketId) {
-//       io.to(receiver.socketId).emit("getMessage", data);
-//       console.log(`📨 Message sent to ${receiverId}:`, data);
-//     } else {
-//       console.warn(`⚠️ User ${receiverId} is not online`);
-//     }
-//   });
-
-//   socket.on("disconnect", () => {
-//     removeUser(socket.id);
-//     console.log("🟡 Updated online users:", onlineUsers);
-//   });
-// });
-
-// const PORT = process.env.PORT || 4000;
-// io.listen(PORT, () => {
-//   console.log(`🚀 Socket.IO server running on http://localhost:${PORT}`);
-// });
-
-import express from "express";
-import { createServer } from "http";
+import { config } from "dotenv";
 import { Server } from "socket.io";
-import cors from "cors";
-import dotenv from "dotenv";
 
-dotenv.config();
+// Load environment variables from .env
+config();
 
-const app = express();
-const httpServer = createServer(app); // <-- use this with Socket.IO
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
+const PORT = process.env.PORT || 5550;
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://realestate-frontend-blond.vercel.app", // your frontend vercel
-];
-
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
-);
-
-const io = new Server(httpServer, {
+const io = new Server({
   cors: {
-    origin: allowedOrigins,
+    origin: CLIENT_URL,
     methods: ["GET", "POST"],
     credentials: true,
   },
 });
 
-// ===== Socket Logic =====
 let onlineUsers = [];
 
+/**
+ * Adds a user to the online users list.
+ * Removes existing duplicate entries (for multi-tab cases).
+ */
 const addUser = (userId, socketId) => {
-  const exists = onlineUsers.some((user) => user.userId === userId);
-  if (!exists) {
-    onlineUsers.push({ userId, socketId });
-    console.log(`✅ User connected: ${userId} (${socketId})`);
-  }
+  onlineUsers = onlineUsers.filter((user) => user.userId !== userId);
+  onlineUsers.push({ userId, socketId });
 };
 
+/** Removes a user by their socket ID. */
 const removeUser = (socketId) => {
   onlineUsers = onlineUsers.filter((user) => user.socketId !== socketId);
-  console.log(`❌ Socket disconnected: ${socketId}`);
 };
 
+/** Gets a user object by their user ID. */
 const getUser = (userId) => {
   return onlineUsers.find((user) => user.userId === userId);
 };
 
+// Main Socket.IO connection logic
 io.on("connection", (socket) => {
-  console.log(`📡 New socket connected: ${socket.id}`);
+  console.log(`✅ Socket connected: ${socket.id}`);
 
   socket.on("newUser", (userId) => {
     addUser(userId, socket.id);
-    console.log("👥 Current online users:", onlineUsers);
+    console.log(`👤 New user added: ${userId}`);
   });
 
   socket.on("sendMessage", ({ receiverId, data }) => {
     const receiver = getUser(receiverId);
-    if (receiver?.socketId) {
+    if (receiver) {
       io.to(receiver.socketId).emit("getMessage", data);
-      console.log(`📨 Message sent to ${receiverId}:`, data);
+      console.log(`📩 Message sent to ${receiverId}`);
+    } else {
+      console.log(`⚠️ User ${receiverId} not found online`);
     }
   });
 
   socket.on("disconnect", () => {
     removeUser(socket.id);
-    console.log("🟡 Updated online users:", onlineUsers);
+    console.log(`❌ Socket disconnected: ${socket.id}`);
   });
 });
 
-// ==== HTTP routes if needed ====
-app.get("/", (req, res) => {
-  res.send("Socket.IO Server is Running...");
-});
-
-// ==== Start Server ====
-const PORT = process.env.PORT || 4000;
-httpServer.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+// Start the server
+io.listen(PORT, () => {
+  console.log(
+    `🚀 Socket.IO server running at http://localhost:${PORT}, allowing origin: ${CLIENT_URL}`
+  );
 });
