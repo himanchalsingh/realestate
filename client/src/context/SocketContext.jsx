@@ -72,13 +72,10 @@ export const SocketContextProvider = ({ children }) => {
   useEffect(() => {
     // Connect only once
     if (!socketRef.current) {
-      socketRef.current = io(
-        import.meta.env.VITE_SOCKET_URL || "http://localhost:5000",
-        {
-          withCredentials: true,
-          transports: ["websocket", "polling"],
-        }
-      );
+      socketRef.current = io(import.meta.env.VITE_SOCKET_URL, {
+        withCredentials: true,
+        transports: ["websocket", "polling"],
+      });
 
       socketRef.current.on("connect", () => {
         setIsConnected(true);
